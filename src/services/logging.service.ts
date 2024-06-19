@@ -1,7 +1,7 @@
 import { resolve } from "app-root-path";
 import * as fs from "fs";
 import { Logger } from "winston";
-import { createLogger, format, transports } from "winston";
+import { createApplicationLogger } from "../logging/logger";
 
 class LoggingService {
   private logFilePath: string;
@@ -13,11 +13,12 @@ class LoggingService {
     }
 
     this.date = new Date();
-    this.logFilePath = resolve(`logs/logs-${this.date.toISOString()}`);
-    this.logger = createWinstonLogger(this.logFilePath);
+    this.logFilePath =
+      process.env.NODE_ENV === "production" ? resolve(`logs/logs-${this.date.toISOString()}`) : `logs/logs.dev`;
+    this.logger = createApplicationLogger(this.logFilePath);
   }
 
-  public info(log: string) {
+  public info(log: unknown) {
     this.logger.info(log);
   }
 
@@ -26,19 +27,3 @@ class LoggingService {
   }
 }
 export const loggingService = new LoggingService();
-
-function createWinstonLogger(filename: string) {
-  return createLogger({
-    level: "info",
-    format: format.combine(
-      format.timestamp({
-        format: "YYYY-MM-DD HH:mm:ss",
-      }),
-      format.errors({ stack: true }),
-      format.splat(),
-      format.json(),
-    ),
-    defaultMeta: { service: "your-service-name" },
-    transports: [new transports.File({ filename })],
-  });
-}

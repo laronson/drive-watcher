@@ -3,3 +3,5 @@ build
 downloads
 logs  
 test
+.google*
+.env*

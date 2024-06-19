@@ -5,20 +5,22 @@ import { downloadFileService } from "../services/download-file.service";
 import { cliTable } from "../ui/cli-table";
 import { fileRepository } from "../repository/file-repository";
 import { loggingService } from "../services/logging.service";
+import { fileChangeService } from "../services/file-change.service";
 const app = express();
 app.use(bodyParser.json());
 
 app.post("/webhook", async (req, res) => {
-  if (req.headers["x-goog-resource-state"] && req.headers["x-goog-resource-state"] === "update") {
+  if (req.headers["x-goog-resource-state"] && req.headers["x-goog-resource-state"] !== "sync") {
+    loggingService.info(`Pending Update ${req.headers["x-goog-resource-state"]}`);
     const channelId = req.headers["x-goog-channel-id"] as string | undefined;
-    const file = fileRepository.getFileByChannelId(channelId);
-    if (file && file.id) {
-      const updatedFile = await googleDriveService.listFile(file.id);
-      fileRepository.upsertFile(updatedFile);
-      cliTable.updateTable();
+
+    if (req.headers["x-goog-resource-state"] === "update" || req.headers["x-goog-resource-state"] === "add") {
+      fileChangeService.filePermissionsUpdate(channelId);
+    } else if (req.headers["x-goog-resource-state"] === "trash") {
+      fileChangeService.resourceRemoved(channelId);
     }
   }
-  res.status(200).send("recieved");
+  return res.send();
 });
 
 app.post("/download/:id", (req, res) => {
@@ -27,9 +29,9 @@ app.post("/download/:id", (req, res) => {
     const file = fileRepository.getFile(fileId);
     if (file) {
       downloadFileService.downloadFile(file);
-      res.status(200).send("Download Requested");
+      return res.send("Download Requested");
     }
-    res.status(400).send("Invalid File");
+    return res.status(400).send("Invalid File");
   } catch (err) {
     loggingService.error(err as Error);
   }

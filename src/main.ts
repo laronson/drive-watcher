@@ -7,3 +7,9 @@ if (process.env.NODE_ENV === "development") {
 }
 
 (async () => await runApp())();
+
+process.stdout.on("error", function (err) {
+  if (err.code == "EPIPE") {
+    process.exit(0);
+  }
+});

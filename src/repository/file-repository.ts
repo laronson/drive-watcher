@@ -1,3 +1,4 @@
+import { loggingService } from "../services/logging.service";
 import { DownloadState, File } from "./types";
 
 class FileRepository {
@@ -22,11 +23,21 @@ class FileRepository {
     return this.files.find((file) => file.channelId === channelId);
   }
 
-  public upsertFile(updateFile: File) {
+  public removeFileByChannelId(channelId: string | undefined) {
+    const idx = this.files.findIndex((file) => file.channelId === channelId);
+    if (idx > -1) {
+      this.files.splice(idx, 1);
+      console.log(this.files);
+    }
+  }
+
+  public upsertFile(updateFile: File, channelId?: string) {
     const existingIdx = this.files.findIndex((file) => file.id === updateFile.id);
-    if (existingIdx > 0) {
+    if (existingIdx >= 0) {
       const existingDownloadState = this.files[existingIdx].downloadState;
-      this.files[existingIdx] = { ...updateFile, downloadState: existingDownloadState };
+      this.files[existingIdx] = { ...updateFile, downloadState: existingDownloadState, channelId };
+    } else {
+      this.files.push({ ...updateFile, channelId });
     }
   }
 

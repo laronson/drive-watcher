@@ -40,7 +40,11 @@ class GoogleDriveService {
   }
 
   public async listFile(fileId: string) {
-    const file = await this.drive.files.get({ fileId });
+    const file = await this.drive.files.get({
+      fileId,
+      fields: "id, name, mimeType, permissions(id, emailAddress, displayName, role)",
+    });
+    console.log(file);
     return this.mapDriveFileToFile(file.data);
   }
 

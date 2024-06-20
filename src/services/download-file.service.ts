@@ -5,9 +5,9 @@ import { googleDriveService } from "./google-drive.service";
 import { fileRepository } from "../repository/file-repository";
 import { cliTable } from "../ui/cli-table";
 
-const supportedDownloadMimeTypesConversions: { [id: string]: string } = {
-  "application/vnd.google-apps.document": "text/plain",
-  "application/vnd.google-apps.spreadsheet": "text/csv",
+const supportedDownloadMetadataConversions: { [id: string]: { mimeType: string; ext: string } } = {
+  "application/vnd.google-apps.document": { mimeType: "text/plain", ext: ".txt" },
+  "application/vnd.google-apps.spreadsheet": { mimeType: "text/csv", ext: ".csv" },
 };
 
 class DownloadFileService {
@@ -18,15 +18,15 @@ class DownloadFileService {
   }
 
   public async downloadFile(file: File) {
-    const mimeType = this.getMimeTypeConversion(file.mimeType);
-    if (!mimeType) {
+    const fileMetadata = this.getDownloadMetadata(file.mimeType);
+    if (!fileMetadata) {
       throw new Error(`Downloads are not supported for file type: ${file.mimeType}`);
     }
     this.setFileUiDownloadState(file.id, "downloading");
 
     const downloadFileName = file.name || `download-${new Date().toISOString()}`;
-    const dest = fs.createWriteStream(resolve(`downloads/${downloadFileName}`));
-    const downloadStream = await googleDriveService.exportFile(file.id, mimeType);
+    const dest = fs.createWriteStream(resolve(`downloads/${downloadFileName}${fileMetadata.ext}`), {});
+    const downloadStream = await googleDriveService.exportFile(file.id, fileMetadata.mimeType);
 
     downloadStream
       .on("end", () => {
@@ -39,8 +39,8 @@ class DownloadFileService {
       .pipe(dest);
   }
 
-  private getMimeTypeConversion(fileMimeType: string) {
-    return supportedDownloadMimeTypesConversions[fileMimeType];
+  private getDownloadMetadata(fileMimeType: string) {
+    return supportedDownloadMetadataConversions[fileMimeType];
   }
 
   private setFileUiDownloadState(fileId: string, downloadState: DownloadState) {

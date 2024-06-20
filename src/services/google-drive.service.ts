@@ -44,7 +44,6 @@ class GoogleDriveService {
       fileId,
       fields: "id, name, mimeType, permissions(id, emailAddress, displayName, role)",
     });
-    console.log(file);
     return this.mapDriveFileToFile(file.data);
   }
 

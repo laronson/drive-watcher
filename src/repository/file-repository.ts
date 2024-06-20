@@ -27,7 +27,6 @@ class FileRepository {
     const idx = this.files.findIndex((file) => file.channelId === channelId);
     if (idx > -1) {
       this.files.splice(idx, 1);
-      console.log(this.files);
     }
   }
 

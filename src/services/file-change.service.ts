@@ -1,11 +1,12 @@
 import { fileRepository } from "../repository/file-repository";
 import { cliTable } from "../ui/cli-table";
 import { googleDriveService } from "./google-drive.service";
+import { loggingService } from "./logging.service";
 
 const ACCEPTED_CHANGE_TYPES = ["add", "remove", "update", "trash"];
 
 class FileChangeService {
-  public async handleChange(changeType: string, channelId: string | undefined) {
+  public async handleChange(changeType: string | undefined, channelId: string | undefined) {
     if (ACCEPTED_CHANGE_TYPES.some((ct) => ct === changeType)) {
       if (changeType === "update" || changeType === "add") {
         await this.filePermissionsUpdate(channelId);
@@ -19,6 +20,7 @@ class FileChangeService {
   public async filePermissionsUpdate(channelId: string | undefined) {
     const file = fileRepository.getFileByChannelId(channelId);
     if (file && file.id) {
+      loggingService.info("Starting Update");
       const updatedFile = await googleDriveService.listFile(file.id);
       fileRepository.upsertFile(updatedFile, channelId);
     }

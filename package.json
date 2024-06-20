@@ -5,7 +5,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && cp .env ./build",
     "start": "node ./build/main.js",
     "dev": "NODE_ENV=development ts-node-dev ./src/main.ts",
     "clean-downloads": "rm -rf downloads",
@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@google-cloud/local-auth": "2.1.0",
+    "@ngrok/ngrok": "^1.3.0",
     "app-root-path": "^3.1.0",
     "body-parser": "^1.20.2",
     "cli-table3": "^0.6.5",

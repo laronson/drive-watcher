@@ -1,4 +1,4 @@
-import { runApp } from "./app/app";
+import { runApp } from "./server/server";
 import dotenv from "dotenv";
 
 if (process.env.NODE_ENV === "development") {

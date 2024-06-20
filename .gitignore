@@ -4,4 +4,6 @@ downloads
 logs  
 test
 .google*
-.env*
+.env.development
+.env
+.ngrok

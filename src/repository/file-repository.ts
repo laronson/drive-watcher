@@ -1,4 +1,3 @@
-import { loggingService } from "../services/logging.service";
 import { DownloadState, File } from "./types";
 
 class FileRepository {

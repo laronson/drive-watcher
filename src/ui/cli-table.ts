@@ -9,13 +9,6 @@ const TABLE_COLUMNS: Record<keyof PrintableFile, TableColumn> = {
   downloadState: { columnName: "Download State", columnWidth: 50, idx: 4 },
 };
 
-// const TABLE_COLUMNS: TableColumn[] = [
-//   { columnName: "File ID", columnWidth: 50 },
-//   { columnName: "File Name", columnWidth: 30 },
-//   { columnName: "Users & Permissions", columnWidth: 100 },
-//   { columnName: "Downloaded", columnWidth: 50 },
-// ];
-
 class CliTable {
   private tableParams: { head: string[]; colWidths: number[]; wordWrap: true };
 

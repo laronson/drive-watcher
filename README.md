@@ -1,9 +1,5 @@
 # Google Drive Watcher
 
-## Overview
-
-This project is a
-
 ## System Requirements
 
 In order run the project you must have the following installed on your computer:
@@ -95,3 +91,4 @@ Because the standard output of the project is taken up by the table displaying c
 - Adding last Updated Time to the command line time which updates every time a file is updated.
 - Improving type safety of the codebase. There were a few locations where I needed to use the `as` keyword to get around some of the lack of up-to-date types provided by the javascript frameworks I used. Further, the mapping done in the `GoogleDriveService` does not do much in protecting against bad incoming data as I have set defaults for those types.
 - Error Handling could be improved to better track specific kinds of errors instead of throwing generic errors when an error occurs.
+- Better management of webhook connections with a proper shutdown process.
